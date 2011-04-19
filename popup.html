@@ -1,0 +1,132 @@
+<html>
+<head>
+  <title>Teleporter</title>  
+</head>
+<style>
+body {
+  min-width:300px;
+  overflow-x:hidden;
+}
+</style>
+<body>
+<form name="teleporterSetup" onsubmit="bootStrap()">
+  <input id="relPath" type="text" autofocus placeholder="/omb" />
+<!-- Need to switch this to load based on a database of profiles -->
+  <select id="profile">
+    <option>.prod.webcms.eop.gov</option>
+    <option>.coop.webcms.eop.gov</option>
+    <option>.stage.webcms.eop.gov</option>
+    <option>.prod.intranet.webcms.eop.gov</option>
+    <option>.coop.intranet.webcms.eop.gov</option>
+    <option>.stage.intranet.webcms.eop.gov</option>
+  </select>
+  <br />
+  <input id="maxTabs" type="number" min="1" max="25" value="2" />
+  <label id="maxTabsLabel" for="maxTabs" />
+<!-- Add checkbox view to allow the user to manually select servers...requires core code change -->
+  <br />
+<!-- Rerun the commands on the current tabs forgo further url tampering simply update the concatenated part 
+  <input id="currentTabs" type="checkbox" />
+  <label form="teleporterSetup" for="currentTabs">Current Tabs?</label>
+-->
+  <input id="submit" type="submit" value="Go!" />
+</form>
+<script>
+/**
+ * Front Controller and entry point for the logic.
+ */
+var bootStrap = function() {
+  //Get Form data
+  var formData = getFormData();
+  //Load the profile
+  var profileData = buildProfile(formData);
+  //Build Tab Properties
+  var tabProperties = buildTabProperties(profileData);
+  //Create Tabs
+  createTabs(tabProperties);
+};
+
+/**
+ * Pulls the form data into a more portable format used by the controller.
+ */
+function getFormData() {
+  var formData = { 
+    'path': document.getElementById('relPath').value,
+	'profile': document.getElementById('profile').value,
+	'maxTabs': Number(document.getElementById('maxTabs').value)
+  };
+  return formData;
+}
+
+/**
+ * Build the profile and return the results to the controller.
+ * @TODO Implement a formal algorithm pattern preferably something that can later be implemented with a frontend builder
+ */
+function buildProfile(formData) {
+ //Verify profile exists
+ var profileData = {
+   'minWebHead': 1,
+   'maxWebHead': formData.maxTabs+1,
+   'concatParts': new Array("http://web", formData.profile)
+ }
+ if (!profileData) { return null; }
+ //Load the data out of the data store
+ //Load the algorithm pattern object
+ //Run the algorithm
+ var runResult = new Array();
+ if (profileData.minWebHead && profileData.maxWebHead) {
+   for(var i = profileData.minWebHead; i < profileData.maxWebHead; i++) {
+     //Check valid url here
+     runResult[i] = profileData.concatParts[0] + i + profileData.concatParts[1];
+   }
+ }
+ else {
+   return null;
+ }
+ //Pass the results back to the controller
+ return runResult;
+}
+
+/**
+ * Build the tab properties objects from the result of running the profile algorithm.
+ */
+function buildTabProperties(profileData) {
+  if (profileData) {
+    var tabProperties = new Array();
+	for(var i = 0; i < profileData.length; i++) {
+	  if (profileData[i]) {
+        tabProperties[i] = {
+	      windowId: undefined,
+	      index: undefined,
+	      url: profileData[i],
+	      selected: undefined,
+	      pinned: undefined
+        }
+      }
+    }
+  }
+  else {
+    return null;
+  }
+ return tabProperties;
+}
+
+/**
+ * Finally! Loop over the provided array of properties objects and create the tabs.
+ */
+function createTabs (tabProperties) {
+  var length = tabProperties.length;
+  if (length) {
+    for(var i = 0; i < length; i++) {
+	  if(tabProperties[i]) {
+        chrome.tabs.create(tabProperties[i]);
+      }
+	}
+  }
+  else {
+    return null;
+  }
+}
+</script>
+</body>
+</html>
