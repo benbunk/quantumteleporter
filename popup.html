@@ -52,8 +52,8 @@ var bootStrap = function() {
 function getFormData() {
   var formData = { 
     'path': document.getElementById('relPath').value,
-	'profile': document.getElementById('profile').value,
-	'maxTabs': Number(document.getElementById('maxTabs').value)
+    'profile': document.getElementById('profile').value,
+    'maxTabs': Number(document.getElementById('maxTabs').value)
   };
   return formData;
 }
@@ -67,7 +67,7 @@ function buildProfile(formData) {
  var profileData = {
    'minWebHead': 1,
    'maxWebHead': formData.maxTabs+1,
-   'concatParts': new Array("http://web", formData.profile)
+   'concatParts': new Array("http://web", formData.profile, formData.path)
  }
  if (!profileData) { return null; }
  //Load the data out of the data store
@@ -77,7 +77,7 @@ function buildProfile(formData) {
  if (profileData.minWebHead && profileData.maxWebHead) {
    for(var i = profileData.minWebHead; i < profileData.maxWebHead; i++) {
      //Check valid url here
-     runResult[i] = profileData.concatParts[0] + i + profileData.concatParts[1];
+     runResult[i] = profileData.concatParts[0] + i + profileData.concatParts[1] + profileData.concatParts[2];
    }
  }
  else {
