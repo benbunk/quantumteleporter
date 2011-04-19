@@ -1,0 +1,27 @@
+DESCRIPTION
+
+USE:
+
+In the first input box place the relative path you would like to visit. 
+Example: /index.html
+
+In the second input box select the profile you will run this request on.
+Note - See path building notes.
+Example: .prod.testserver.com
+
+In the third input box select the number of webservers to run this request against. (Minimum 1 - Maximum 25) (Ticket exists for fixing this)
+
+Finally Click Go! All tabs will open.
+
+NOTES:
+
+Path Building - 
+ http://web + systemCounter + profileName + relativePath
+ 
+ systemCounter - The for loop based on your number of tabs selected as input (Min 1 - Max 25)
+
+ profileName - Selected as input from a dropdown menu. (Ticket exists for changing this)
+
+ relativePath - Doesn't assume '/' in either profileName or relativePath so make sure to include one. 
+
+
